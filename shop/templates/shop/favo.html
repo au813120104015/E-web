@@ -1,0 +1,37 @@
+{% extends 'shop/layout/main.html' %}
+
+{% block title %}
+    Shopkart | Collections
+{% endblock title %}
+
+{% block content %}
+    <section class="bg-light py-4 my-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                        <h4 class="mb-2">Cart</h4>
+                        <hr style="border-color:whitesmoke;">
+                        {% include 'shop/inc/message.html' %}
+                </div>
+                <table>
+                    <tr>
+                        <th>Images</th>
+                        <th>Product Name</th>
+                        <th>Amount</th>
+                        <th>Remove</th>
+                    </tr>
+                    {% for item in fav %}
+                    <tr>
+                        <td>
+                            <img src="{{item.product.product_image.url}}" height="75px" alt="{{item.product.name}}">
+                        </td>
+                        <td>{{item.product.name}}</td>
+                        <td>{{item.product.selling_price | stringformat:'d'}}</td>
+                        <td>
+                            <a href="{% url 'remove_cart' item.id %}" onclick="return confirm('Are you sure? to delete')" class="btn btn-danger btn-sm">Remove</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+    </section>
+{% endblock content %}

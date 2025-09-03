@@ -1,0 +1,53 @@
+{% extends 'shop/layout/main.html' %}
+
+{% block title %}
+    Shopkart | Collections
+{% endblock title %}
+
+{% block content %}
+    <section class="bg-light py-4 my-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                        <h4 class="mb-2">Cart</h4>
+                        <hr style="border-color:whitesmoke;">
+                        {% include 'shop/inc/message.html' %}
+                </div>
+                <table>
+                    <tr>
+                        <th>Images</th>
+                        <th>Product Name</th>
+                        <th>Unit</th>
+                        <th>Quantity</th>
+                        <th>Amount</th>
+                        <th>Remove</th>
+                    </tr>
+                {% for item in cart %}
+                    <tr>
+                        <td>
+                            <img src="{{item.product.product_image.url}}" height="75px" alt="{{item.product.name}}">
+                        </td>
+                        <td>{{item.product.name}}</td>
+                        <td>{{item.product.selling_price | stringformat:'d'}}</td>
+                        <td>{{item.product_qty}}</td>
+                        <td class="amount">{{item.total_price | stringformat:'d'}}</td>
+                        <td>
+                            <a href="{% url 'remove_cart' item.id %}" onclick="return confirm('Are you sure? to delete')" class="btn btn-danger btn-sm">Remove</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                    <tr>
+                        <td colspan="4" class="text-center" style="font-weight: bold;">Total Price</td>
+                        <td id="net">0</td>
+                    </tr>
+                </table>
+    </section>
+    <script>
+        const nodes=document.querySelectorAll('.amount');
+        const arr=Array.from(nodes);
+        const res=arr.reduce((acc,curr)=>{
+            return acc+=Number(curr.textContent)
+        },0);
+        document.getElementById('net').innerHTML='₹' +res;
+    </script>
+{% endblock content %}

@@ -1,0 +1,157 @@
+{% extends 'shop/layout/main.html' %}
+
+{% block title %}
+    Shopkart | Online Shopping
+{% endblock title %}
+
+{% block content %}
+    <section class="bg-light py-4 my-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h4 class="mb-3">{{products}} Details</h4>
+                    <hr style="border-color:rgb(141, 137, 137);">
+                    {% include 'shop/inc/message.html' %}
+                </div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                      <li class="breadcrumb-item"><a href="{% url 'collections' %}">Home</a></li>
+                      <li class="breadcrumb-item"><a href="{% url 'collections' products.category.name %}">Collections</a></li>
+                      <li class="breadcrumb-item active" aria-current="page">Data</li>
+                    </ol>
+                  </nav>
+                    <div class="col-4 my-3 pic-box">
+                        {% if products.trending %}
+                            <div class="hot">Hot</div>
+                        {% endif %}
+                        {% if products.product_image %}
+                            <img src="{{products.product_image.url}}" class="card-img-top" alt="Categories" style="height: 200px; width: auto;">
+                        {% endif %}
+                    </div>
+                    <div class="col-8 my-3">
+                        <h3 class="text-primary">{{products | upper}}</h3>
+                        <p>{{products.vendor}}</p>
+                        <p>{{products.discription}}</p>
+                        <h5 class="my-2 text-danger">Current Price : ₹ <s>{{products.orginal_price}}</s></h5>
+                        <h4 class="my-2 text-success">Offer Price : ₹ {{products.selling_price}}</h4>
+                        <div class="input-group" style="width: 120px;">
+                            <div class="input-group-prepend">
+                              <button class="input-group-text bg-success text-light" type="button" id="btnMinus">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dash" viewBox="0 0 16 16">
+                                    <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8"/>
+                                </svg>
+                              </button>
+                              <input type="text" name="qty" id="txtQty" value="1" class="form-control text-center">
+                              <button class="input-group-text bg-success text-light" type="button" id="btnPlus">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                                </svg>
+                              </button>
+                            </div>
+                        </div>
+                        <div class="my-3">
+                            <input type="hidden" value="{{product.id}}" id="pid">
+                            {% if products.quantity > 0 %}
+                                <button class="btn btn-primary" id="btnCart">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
+                                        <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                                    </svg>Add to Cart
+                                </button>
+                            {% else %}
+                                <button class="btn btn-secondary">
+                                    <i>Out of Stack</i>
+                                </button>
+                            {% endif %}
+                            <button class="btn btn-danger" id="btnFav">
+                                <i><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
+                                </svg></i>                           
+                             </button>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        document.addEventListener('DOMContentLoaded',function(event){
+            const btnMinus=document.getElementById('btnMinus');
+            const btnPlus=document.getElementById('btnPlus');
+            const txtQty=document.getElementById('txtQty');
+            const pid=document.getElementById('pid');
+            const btnCart=document.getElementById('btnCart');
+            const btnFav=document.getElementById('btnFav');
+           
+            btnMinus.addEventListener('click',function(){
+                let qty=parseInt(txtQty.value,10);
+                qty=isNaN(qty)?0:qty;
+                if(qty>1){
+                    qty--;
+                    txtQty.value=qty;
+                }
+            });
+            
+            btnPlus.addEventListener('click',function(){
+                let qty=parseInt(txtQty.value,10);
+                qty=isNaN(qty)?0:qty;
+                if(qty<11){
+                    qty++;
+                    txtQty.value=qty;
+                }
+            });
+            btnCart.addEventListener('click',function(){
+                let qty=parseInt(txtQty.value,10);
+                qty=isNaN(qty)?0:qty;
+                if(qty>0){
+                    let postObj={
+                        'product_qty':qty,
+                        'pid':pid.value,
+                    }
+                    console.log(postObj);
+                    fetch('/cart',{
+                        method:'POST',
+                        credentials:'same-origin',
+                        headers:{
+                            'Accept':'application/json',
+                            'x-Requested-with':'XMLHttpRequest',
+                            'x-CSRFToken':'{{ csrf_token }}',
+                        },
+                        body:JSON.stringify(postObj)
+                    }).then(response=>{
+                        return response.json();
+                    }).then(data=>{
+                        alert(data['status']);
+                    });
+                }else{
+                    alert('Please Enter the Quantity');
+                }
+            });
+            btnFav.addEventListener('click',function(){
+                let qty=parseInt(txtQty.value,10);
+                qty=isNaN(qty)?0:qty;
+                if(qty>0){
+                    let postObj={
+                        'product_qty':qty,
+                        'pid':pid.value,
+                    }
+                    console.log(postObj);
+                    fetch('/favo',{
+                        method:'POST',
+                        credentials:'same-origin',
+                        headers:{
+                            'Accept':'application/json',
+                            'x-Requested-with':'XMLHttpRequest',
+                            'x-CSRFToken':'{{csrf_token}}',
+                        },
+                        body:JSON.stringify(postObj)
+                    }).then(response=>{
+                        return response.json();
+                    }).then(data=>{
+                        alert(data['status']);
+                    });
+                }else{
+                    alert('Please Enter the Quantity');
+                }
+            });
+        });
+    </script>
+{% endblock content %}
